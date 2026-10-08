@@ -146,6 +146,37 @@ Day 9ではPen間差が
 大量のセンサーデータをすべて目視するのではなく、
 詳細確認が必要な日を自動的に抽出する仕組みへの応用が考えられる。
 
+## モニタリング候補の自動判定
+
+Pen間差の急拡大を検出し、その後の状態が継続しているかを判定する簡易的なモニタリング処理を作成した。
+
+### 判定方法
+
+1. TrialごとにPen間差の前日変化量を算出
+2. 前日変化量の95%点以上を急拡大候補として抽出
+3. 候補日の翌日から3日間のPen間差を確認
+4. 候補日のPen間差の50%以上が3日間維持された場合、継続的な変化と判定
+
+追跡データが不足する場合は、判定不能として扱う。
+
+### 判定結果
+
+| Trial | Day | 判定 |
+|---|---|---|
+| Trial 1 | 9 | Temporary（一時的） |
+| Trial 1 | 15 | Persistent（継続的） |
+| Trial 2 | 33 | Persistent（継続的） |
+| Trial 2 | 36 | Insufficient data（判定不能） |
+
+![Monitoring detection results](images/monitoring_detection_results.png)
+
+### 考察
+
+Trial 1では、一時的なPen間差の拡大と、拡大後も差が継続するケースの両方が確認された。
+
+この結果から、単日の変化量だけでなく、その後の推移を確認することで、異なる変化パターンを分類できる可能性が示された。
+
+なお、判定条件は探索的に設定したものであり、鶏の健康異常を直接示すものではない。
 
 ## 9. 注意点・今後の課題
 
@@ -178,6 +209,7 @@ broiler-monitoring-analysis/
 ├── notebooks/
 │   ├── 01_data_overview.ipynb
 │   └── 02_growth_anomaly_analysis.ipynb
+│   └── 03_monitoring_detection.ipynb
 ├── sql/
 ├── src/
 ├── .gitignore
