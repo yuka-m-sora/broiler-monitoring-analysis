@@ -178,6 +178,36 @@ Trial 1では、一時的なPen間差の拡大と、拡大後も差が継続す�
 
 なお、判定条件は探索的に設定したものであり、鶏の健康異常を直接示すものではない。
 
+## 判定基準の感度分析
+
+モニタリングの継続判定に使用する基準値について、
+30%・50%・70%・90%の4種類を比較した。
+
+### 分析結果
+
+| Trial | Day | 30% | 50% | 70% | 90% |
+|---|---|---|---|---|---|
+| Trial 1 | 9 | Temporary | Temporary | Temporary | Temporary |
+| Trial 1 | 15 | Persistent | Persistent | Persistent | Persistent |
+| Trial 2 | 33 | Persistent | Persistent | Persistent | Temporary |
+| Trial 2 | 36 | 判定不能 | 判定不能 | 判定不能 | 判定不能 |
+
+### 可視化
+
+![Threshold comparison](images/trial2_day33_threshold_comparison.png)
+
+### 考察
+
+Trial 2のDay 33では、30〜70%の基準では継続的な変化と判定されたが、
+90%では一時的な変化と判定された。
+
+このことから、判定基準によって結果が変化するケースが存在することが確認された。
+
+一方、Trial 1のDay 9とDay 15では、すべての基準で判定が一致した。
+
+今回の分析は判定基準に対する感度を確認したものであり、
+最適な基準値や鶏の健康異常を特定するものではない。
+
 ## 9. 注意点・今後の課題
 
 - 95%点は探索的に設定したしきい値であり、異常を確定する基準ではない
@@ -210,6 +240,7 @@ broiler-monitoring-analysis/
 │   ├── 01_data_overview.ipynb
 │   └── 02_growth_anomaly_analysis.ipynb
 │   └── 03_monitoring_detection.ipynb
+│   └── 04_threshold_validation.ipynb
 ├── sql/
 ├── src/
 ├── .gitignore
