@@ -281,3 +281,100 @@ broiler-monitoring-analysis/
 ```
 
 ※ 生データおよび中間データはGitHubには含めていない。
+
+## Streamlitダッシュボード
+
+本プロジェクトでは、Pythonによる分析結果を視覚的に確認できるよう、Streamlitを使用したWebダッシュボードを作成しました。
+
+### 主な機能
+
+- **Trialの切り替え**：Trial 1・Trial 2の分析結果を選択して表示
+- **Pen別の荷重推移**：各Penのプラットフォーム荷重の日次中央値を折れ線グラフで可視化
+- **Pen間差の可視化**：同じ日のPen別中央値の最大値と最小値の差を表示
+- **急拡大候補の検出**：Pen間差の前日からの増加量について、95パーセンタイル以上となる日を抽出
+- **検出結果の強調表示**：急拡大候補をグラフ上に赤い点で表示
+- **継続性の判定**：急拡大後3日間のPen間差をもとに、Persistent・Temporary・Insufficient dataに分類
+- **判定基準の変更**：継続性の判定基準を30%・50%・70%・90%から選択可能
+
+### 分析上の注意点
+
+本ダッシュボードは、プラットフォーム荷重の変化を探索的に分析するためのものです。
+
+検出された急拡大候補は、鶏の疾病や健康異常を直接示すものではありません。
+
+### ローカル環境での起動方法
+
+Pythonがインストールされた環境で、以下の手順を実行します。
+
+**1. リポジトリを取得**
+
+```bash
+git clone https://github.com/yuka-m-sora/broiler-monitoring-analysis.git
+cd broiler-monitoring-analysis
+```
+
+**2. 仮想環境を作成・有効化（Windows PowerShell）**
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**3. 必要なライブラリをインストール**
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+**4. 分析用データを配置**
+
+本リポジトリには、元データおよび集計済みCSVを含めていません。
+
+データの取得元は「データセット・出典」を参照してください。
+
+現時点では、以下の集計済みCSVを事前に作成し、配置する必要があります。
+
+```text
+data/interim/
+├── trial1_daily_quality_summary.csv
+└── trial2_daily_quality_summary.csv
+```
+
+**5. Streamlitを起動**
+
+```powershell
+python -m streamlit run app.py
+```
+
+ブラウザで表示されたローカルURLにアクセスすると、ダッシュボードを確認できます。
+
+※ 集計済みCSVの生成手順は今後整備予定です。現時点では、リポジトリの取得だけでアプリを再現することはできません。
+
+## データセット・出典
+
+本プロジェクトでは、ブロイラー鶏舎に設置された計量システムの公開研究データを使用しています。
+
+**データセット名**
+
+Supplementary dataset to publication: "Elevated platforms with integrated weighing beams allow automatic monitoring of usage and activity in broiler chickens"
+
+**公開元**
+
+Zenodo（2023年）
+
+https://zenodo.org/records/7783989
+
+**使用データ**
+
+- Trial 1：2019年6月19日〜7月22日
+- Trial 2：2019年9月9日〜10月14日
+
+各Trialのプラットフォーム荷重データを日次・Pen別に集計し、荷重の推移やPen間差の変化を分析しています。
+
+### データの取り扱い
+
+元データおよび分析用の集計済みCSVは、本リポジトリには含めていません。
+
+データを利用する場合は、上記の公開元から取得し、公開元の利用条件を確認してください。
+
+なお、本分析で扱う荷重はプラットフォーム上で計測された値であり、鶏1羽の体重を示すものではありません。
