@@ -73,6 +73,57 @@ if len(date_range) == 2:
         (display_data["date"].dt.date >= start_date) &
         (display_data["date"].dt.date <= end_date)
     ]
+
+# Pen間差を計算
+pen_spread = (
+    trial_data.groupby("date")["median_mass"]
+    .agg(lambda x: x.max() - x.min())
+    .reset_index(name="pen_spread")
+    .sort_values("date")
+)
+
+# 前日からの変化量
+pen_spread["spread_change"] = pen_spread["pen_spread"].diff()
+
+# Trialごとの95パーセンタイルを基準にする
+threshold = pen_spread["spread_change"].quantile(0.95)
+
+# 基準以上の増加があった日を抽出
+candidates = pen_spread[
+    pen_spread["spread_change"] >= threshold
+].copy()
+
+# 分析サマリー
+st.subheader("分析サマリー")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        "表示期間の日数",
+        f"{display_data['date'].nunique()} 日"
+    )
+
+with col2:
+    st.metric(
+        "表示対象Pen数",
+        f"{display_data['pen'].nunique()}"
+    )
+
+with col3:
+    if len(date_range) == 2:
+        summary_candidates = candidates[
+            (candidates["date"].dt.date >= start_date) &
+            (candidates["date"].dt.date <= end_date)
+        ]
+    else:
+        summary_candidates = candidates
+
+    st.metric(
+        "急拡大候補数（選択期間内）",
+        f"{len(summary_candidates)} 件"
+    )
+
 st.subheader(f"{selected_trial}：Pen別の荷重推移")
 
 # グラフ用にデータを整形
@@ -88,16 +139,6 @@ st.caption(
     "各Penのプラットフォーム荷重の日次中央値を表示しています。"
     "鶏1羽の体重を示すものではありません。"
 )
-# Pen間差を計算
-pen_spread = (
-    trial_data.groupby("date")["median_mass"]
-    .agg(lambda x: x.max() - x.min())
-    .reset_index(name="pen_spread")
-    .sort_values("date")
-)
-
-# 前日からの変化量
-pen_spread["spread_change"] = pen_spread["pen_spread"].diff()
 
 # Pen間差グラフの表示期間だけを絞り込む
 if len(date_range) == 2:
@@ -152,14 +193,6 @@ st.caption(
 # 急拡大候補の検出
 st.subheader(f"{selected_trial}：Pen間差の急拡大候補")
 
-# Trialごとの95パーセンタイルを基準にする
-threshold = pen_spread["spread_change"].quantile(0.95)
-
-# 基準以上の増加があった日を抽出
-candidates = pen_spread[
-    pen_spread["spread_change"] >= threshold
-].copy()
-
 # 選択期間内の急拡大候補だけを表示
 display_candidates = candidates[
     (candidates["date"].dt.date >= start_date) &
@@ -175,7 +208,10 @@ display_candidates = display_candidates[
     "spread_change": "前日からの増加量 [kg]"
 })
 
-st.metric("急拡大候補（選択期間内）", f"{len(display_candidates)} 件")
+st.metric(
+    "急拡大候補（選択期間内）",
+    f"{len(display_candidates)} 件"
+)
 
 st.write(f"検出基準：前日からの増加量が {threshold:.3f} kg 以上")
 
