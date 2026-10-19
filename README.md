@@ -1,5 +1,24 @@
 # Broiler Monitoring Analysis
 
+## プロジェクト概要
+
+ブロイラー鶏舎の計量プラットフォームから取得された荷重データを分析し、Pen間の変化を可視化・検出するデータ分析プロジェクトです。
+
+Python・pandas・SQLを使用した時系列分析に加え、Streamlitによる対話型ダッシュボードを開発しました。
+
+### 主な成果
+
+- Trial 1・Trial 2の荷重データを日次・Pen別に集計
+- Pen間差の急拡大候補を探索的なしきい値で検出
+- 急拡大後の継続性を3つの区分で判定
+- SQLとpandasによる計算結果の整合性を検証
+- Trial・Pen・期間を選択できるダッシュボードを実装
+- 分析結果をCSV形式でダウンロード可能
+
+※ 本分析は荷重変化のモニタリングを目的としたものであり、鶏の疾病や健康異常を診断するものではありません。
+
+---
+
 ## 1. 背景・目的
 
 ブロイラーの飼育では、成長状況や鶏群の状態を継続的に把握することが重要である。
@@ -248,36 +267,41 @@ SQLによるデータ管理・集計とPythonによる分析を組み合わせ�
 - 今後はモニタリング指標の妥当性や、継続的な変化を判定する方法を検討する
 
 
+
 ## 10. 使用技術
 
-- Python
-- pandas
-- NumPy
-- Matplotlib
-- Jupyter Notebook
-- Git / GitHub
+| 分類 | 技術 | 用途 |
+|---|---|---|
+| プログラミング言語 | Python | データ加工・分析・アプリ開発 |
+| データ処理 | pandas、NumPy | 日次集計・時系列分析 |
+| データベース・SQL | SQLite、SQL | データ集計・分析結果の検証 |
+| 可視化 | Matplotlib、Altair | 分析グラフ・対話型グラフ |
+| Webアプリ | Streamlit | ダッシュボードの開発 |
+| 開発環境 | Jupyter Notebook、VS Code | 分析・実装 |
+| バージョン管理 | Git、GitHub | ソースコード管理 |
 
 
 ## 11. ディレクトリ構成
 
 ```text
 broiler-monitoring-analysis/
-├── data/
-│   ├── raw/
-│   ├── interim/
-│   └── processed/
-├── images/
+├── app.py                       # Streamlitダッシュボード
+├── README.md                    # プロジェクトの説明
+├── requirements.txt             # 必要なPythonライブラリ
+├── .gitignore                   # Git管理から除外するファイル
+├── src/
+│   └── prepare_daily_data.py    # 日次集計データの生成
 ├── notebooks/
 │   ├── 01_data_overview.ipynb
-│   └── 02_growth_anomaly_analysis.ipynb
-│   └── 03_monitoring_detection.ipynb
-│   └── 04_threshold_validation.ipynb
+│   ├── 02_growth_anomaly_analysis.ipynb
+│   ├── 03_monitoring_detection.ipynb
+│   ├── 04_threshold_validation.ipynb
 │   └── 05_sql_analysis.ipynb
-├── sql/
-├── src/
-├── .gitignore
-├── README.md
-└── requirements.txt
+├── data/
+│   ├── raw/                     # 元データ（Git管理対象外）
+│   ├── interim/                 # 日次集計データ（Git管理対象外）
+│   └── processed/               # 加工データ（Git管理対象外）
+└── images/                      # 分析結果の画像
 ```
 
 ※ 生データおよび中間データはGitHubには含めていない。
@@ -286,21 +310,30 @@ broiler-monitoring-analysis/
 
 本プロジェクトでは、Pythonによる分析結果を視覚的に確認できるよう、Streamlitを使用したWebダッシュボードを作成しました。
 
+
 ### 主な機能
 
-- **Trialの切り替え**：Trial 1・Trial 2の分析結果を選択して表示
-- **Pen別の荷重推移**：各Penのプラットフォーム荷重の日次中央値を折れ線グラフで可視化
-- **Pen間差の可視化**：同じ日のPen別中央値の最大値と最小値の差を表示
-- **急拡大候補の検出**：Pen間差の前日からの増加量について、95パーセンタイル以上となる日を抽出
+- **Trialの切り替え**：Trial 1・Trial 2を選択して表示
+- **Penの選択**：表示するPenを複数選択可能
+- **期間の指定**：開始日・終了日を指定して表示範囲を変更
+- **分析サマリー**：表示期間の日数・対象Pen数・選択期間内の急拡大候補数を表示
+- **Pen別の荷重推移**：プラットフォーム荷重の日次中央値を折れ線グラフで可視化
+- **Pen間差の可視化**：同一Trial内のPen間差の推移を表示
+- **急拡大候補の検出**：Pen間差の前日からの増加量について95パーセンタイル以上となる日を抽出
 - **検出結果の強調表示**：急拡大候補をグラフ上に赤い点で表示
-- **継続性の判定**：急拡大後3日間のPen間差をもとに、Persistent・Temporary・Insufficient dataに分類
-- **判定基準の変更**：継続性の判定基準を30%・50%・70%・90%から選択可能
+- **継続性の判定**：Persistent・Temporary・Insufficient dataに分類
+- **判定基準の変更**：継続性の判定基準を変更可能
+- **CSVダウンロード**：継続性の判定結果をExcelでも確認できるCSV形式で出力
 
 ### 分析上の注意点
 
 本ダッシュボードは、プラットフォーム荷重の変化を探索的に分析するためのものです。
 
 検出された急拡大候補は、鶏の疾病や健康異常を直接示すものではありません。
+
+Penの選択は「Pen別の荷重推移」の表示に反映されます。一方、Pen間差・急拡大候補の検出・継続性判定は、選択したTrialの全Penを対象として計算しています。
+
+期間指定はグラフや候補一覧の表示範囲に反映されますが、急拡大候補の検出基準と継続性判定はTrial全期間のデータを使用します。
 
 ### ローカル環境での起動方法
 

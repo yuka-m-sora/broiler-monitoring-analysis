@@ -49,6 +49,12 @@ selected_pens = st.multiselect(
     default=pen_options
 )
 
+st.caption(
+    "Penの選択は「Pen別の荷重推移」に反映されます。"
+    "Pen間差・急拡大候補・継続性判定は、"
+    "選択したTrialの全Penを対象に計算しています。"
+)
+
 # グラフ表示用のデータを絞り込む
 display_data = trial_data[
     trial_data["pen"].isin(selected_pens)
