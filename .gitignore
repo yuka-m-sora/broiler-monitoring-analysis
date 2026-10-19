@@ -9,7 +9,9 @@ __pycache__/
 
 # Raw / processed data
 data/raw/
-data/interim/
+data/interim/*
+!data/interim/trial1_daily_quality_summary.csv
+!data/interim/trial2_daily_quality_summary.csv
 data/processed/
 
 # Database

@@ -428,10 +428,18 @@ https://zenodo.org/records/7783989
 
 各Trialのプラットフォーム荷重データを日次・Pen別に集計し、荷重の推移やPen間差の変化を分析しています。
 
-### データの取り扱い
 
-元データおよび分析用の集計済みCSVは、本リポジトリには含めていません。
+### データの取り扱い・ライセンス
 
-データを利用する場合は、上記の公開元から取得し、公開元の利用条件を確認してください。
+本プロジェクトでは、Zenodoで公開されている研究データを使用しています。
 
-なお、本分析で扱う荷重はプラットフォーム上で計測された値であり、鶏1羽の体重を示すものではありません。
+- データセット：Supplementary dataset to publication: "Elevated platforms with integrated weighing beams allow automatic monitoring of usage and activity in broiler chickens"
+- 出典：https://zenodo.org/records/7783989
+- ライセンス：Creative Commons Attribution 4.0 International（CC BY 4.0）
+- ライセンス本文：https://creativecommons.org/licenses/by/4.0/
+
+元データを日付・Pen単位で集計し、プラットフォーム荷重の中央値やPen間差などを分析しています。
+
+本リポジトリには、分析用に加工した日次集計CSVのみを含め、元データは含めていません。
+
+データセットの著作者情報については、公開元の記載に従って帰属表示を行います。
