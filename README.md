@@ -437,9 +437,8 @@ https://zenodo.org/records/7783989
 - 出典：https://zenodo.org/records/7783989
 - ライセンス：Creative Commons Attribution 4.0 International（CC BY 4.0）
 - ライセンス本文：https://creativecommons.org/licenses/by/4.0/
+- 著作者：Helen Schomburg, Julia Malchow, Oliver Sanders, Jonas Knöll, Lars Schrader
 
 元データを日付・Pen単位で集計し、プラットフォーム荷重の中央値やPen間差などを分析しています。
 
 本リポジトリには、分析用に加工した日次集計CSVのみを含め、元データは含めていません。
-
-データセットの著作者情報については、公開元の記載に従って帰属表示を行います。
