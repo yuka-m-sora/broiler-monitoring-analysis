@@ -252,3 +252,17 @@ st.info(
     "この判定は、Pen間差の変化を把握するための探索的な基準です。"
     "鶏の疾病や健康異常を直接診断するものではありません。"
 )
+
+# 分析結果をCSV形式でダウンロード
+st.subheader("分析結果のダウンロード")
+
+csv_data = display_detection_results.to_csv(
+    index=False
+).encode("utf-8-sig")
+
+st.download_button(
+    label="継続性判定結果をCSVでダウンロード",
+    data=csv_data,
+    file_name=f"{selected_trial.replace(' ', '_')}_detection_results.csv",
+    mime="text/csv"
+)
