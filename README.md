@@ -6,6 +6,14 @@
 
 Python・pandas・SQLを使用した時系列分析に加え、Streamlitによる対話型ダッシュボードを開発しました。
 
+### 公開アプリ
+
+Streamlit Community Cloudで公開しています。
+
+**[ブロイラー荷重モニタリングダッシュボードを開く](https://broiler-monitoring-analysis.streamlit.app/)**
+
+ブラウザ上でTrialやPen、表示期間を切り替えながら、荷重推移やPen間差、急拡大候補の判定結果を確認できます。
+
 ### 主な成果
 
 - Trial 1・Trial 2の荷重データを日次・Pen別に集計
